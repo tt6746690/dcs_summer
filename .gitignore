@@ -1,2 +1,11 @@
+# files too large
+numerical_methods_in_finance_and_economics_matlab_intro.pdf
+
+# latex stuff
+*.aux
+*.log
+*.out
+*.synctex.gz
+
+# macos
 .DS_store
-notes/numerical_methods_in_finance_and_economics_matlab_intro.pdf
