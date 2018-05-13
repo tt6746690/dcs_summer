@@ -14,6 +14,7 @@
 \newcommand{\cov}[1]{cov\{#1\}} 
 \newcommand{\normal}[1]{\mathcal{N}\left(#1\right)}
 \newcommand{\exponents}[1]{exp\left\{#1\right\}}
+\newcommand{\indicator}[1]{\mathbbm{1}_{#1}}
 
 \newcommand{\bmu}{\boldsymbol{\mu}}
 \newcommand{\bpi}{\boldsymbol{\pi}}
@@ -21,6 +22,7 @@
 \newcommand{\bSigma}{\boldsymbol{\Sigma}}
 \newcommand{\bphi}{\boldsymbol{\phi}}
 
+\newcommand{\calA}{\mathcal{A}}
 \newcommand{\calL}{\mathcal{L}}
 \newcommand{\calE}{\mathcal{E}}
 \newcommand{\calR}{\mathcal{R}}
@@ -33,6 +35,8 @@
 \newcommand{\bZ}{\matr{Z}}
 \newcommand{\bz}{\matr{z}}
 \newcommand{\bu}{\matr{u}}
+
+
 
 
  
@@ -242,16 +246,79 @@
         where $h(x) = \sqrt{1-x^2}$ and $f(x) = Unif(0,1)$. To get a better estimator with importance sampling, we pick $\tilde{g}(x)$ as an estimator of the optimal bias distribution
         \[
             \tilde{g}(x) = \frac{h(x)f(x)}{\tilde{\theta}}
+            = \frac{h(x)L}{\sum_k h(s_k)}
             \qquad 
-            \text{where $\tilde{\theta}$ is an estimator of $\theta$}
+            \text{where }
             \qquad 
             \tilde{\theta} = \frac{\sum_k h(s_k)}{L}
         \]  
-        where we divide $[0,1]$ into $L$ equally spaced subintervals, and $s_k = \textstyle \frac{k-1}{L} + \frac{1}{2L}$, for $k=1,\cdots, L$ 
+        where we divide $[0,1]$ into $L$ equally spaced subintervals, and $s_k = \textstyle \frac{k-1}{L} + \frac{1}{2L}$, for $k=1,\cdots, L$. 
+        \begin{center}
+            \textbf{Intuitively}, $x\sim g$ samples more frequently for large values of $h(x)$, i.e. values that have a bigger impact on the true value of the integral. The importance sampling in this case distort the original probability measure of $f(x) = Unif(0,1)$ to be $h(x)$
+        \end{center}
+        Note $\tilde{g}(x)$ may not be a density integrating to 1 and sampling from $\tilde{g}(x)$ is not that simple. An alternative idea that deals with the problem is to define a discrete density $q(x)$ representing the probability of sampling from a subinterval and use a uniform density within each subinterval, i.e. 
+        \[
+            q_k = \frac{h(s_k)}{\sum_j^L h(s_j)} 
+            \qquad \qquad 
+            k = 1,\cdots, L
+        \]
+        So we can define $g(x)$ to be a piecewise constant density over the $L$ subintervals, where multiplication by $L$ needed to make it a valid density 
+        \[
+            g(x) = Lq_k 
+            \qquad 
+            \frac{k-1}{L} \leq x \leq \frac{k}{L}
+        \]
+        We can now estimate $\pi$ with importance sampling
+        \[
+            \pi = \int_0^1 h(x) dx = \E[x\sim f]{h(x)} 
+            = \E[x\sim g]{\frac{h(x)f(x)}{g(x)}}
+        \]
+        The algorithm is as follows 
+        \begin{enumerate}
+            \item Sample $k \sim q$, where $k$ represent the $k$-th subinterval. 
+            \begin{align*}
+                &\texttt{cs = cumsum(hvals);} \\ 
+                &\texttt{k = sum(rand*cs(L) > cs) + 1;} \\ 
+            \end{align*}
+            \item Sample $x$ uniformly from $k$-th subinterval
+            \[
+                \texttt{x = (k - 1)/L + rand/L;}  
+            \]
+            \item Compute the estimate $\textstyle\frac{h(x)f(x)}{g(x)}
+            = \frac{\sqrt{1-x^2} \cdot 1}{Lq_k}$
+            \begin{align*}
+                &\texttt{ q = hvals(k) / cs(L);} \\ 
+                &\texttt{ est(j) = sqrt(1 - x.\^{}2) / (q*L); } \\
+            \end{align*}
+            \item Repeated sampling and average the result
+        \end{enumerate}
+        \item \textbf{Estimating Rare Events} Importance sampling used when small probabilities involved. Suppose $\bX$ has joint density $f$. We want to estimate 
+        \[
+            \theta = \E{h(\bX) | \bX \in \calA}    
+        \]
+        where $\{\bX \in \calA \}$ are rare events with a small unknown probability $p\{\bX \in \calA \}$. We want to reformulate the equation to get rid of the conditional term. The conditional density is given by 
+        \[
+            f(\bx | \bX \in \calA ) = \frac{f(\bx)}{p(\bX \in \calA)}
+        \]  
+        for $\bx \in \calA$. Let $\indicator{\bX \in \calA}(\bX)$ be an indicator representing if $\bX$ is in $\calA$. We can reformulate the problem by 
+        \[
+            \theta 
+            = \frac{\int_{\bx \in \calA} h(\bx) f(\bx) d\bx}{p(\bX \in \calA)}
+            = \frac{\E{h(\bX) \indicator{\calA}(\bX)}}{\E{\indicator{\calA}(\bX)}}
+        \]
+        Now assume there is a density $g$ such that the event is more likely under the corresponding probability measure, then we can generate samples $\bX_i \sim g$ and estimate 
+        \[
+            \hat{\theta} = 
+            \frac{
+                \sum_i h(\bX_i) \indicator{\calA}(\bX_i) \frac{f(\bX_i)}{g(\bX_i)}
+            }{
+                \sum_i \indicator{\calA}(\bX_i) \frac{f(\bX_i)}{g(\bX_i)}
+            }
+        \]
     \end{enumerate}
 \end{enumerate}
 
 
-
+ 
 
 \end{document}
