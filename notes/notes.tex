@@ -96,7 +96,161 @@
         \hat{I}_m = \frac{1}{m} \sum_{i=1}^m g(U_i)
     \]
     where $\lim_{m\to \infty} \hat{I}_m = I$ with probability 1 by all of large numbers
+    \item \textbf{Experiment} Lowered variance for larger sample sizes. Would want to know how many samples needed in order to attain a given precision
 \end{enumerate}
+
+
+
+\linksection{251}{4.3 Generating Pseudorandom Variates}
+
+
+\begin{enumerate}
+    \item \textbf{Linear Congruential Generators (LCG)} Deterministic sequence of samples, whose value depends on the value of the seed. Generate according to 
+    \[
+        Z_i = (a Z_{i-1} + c) \mod m  
+    \]
+    where $m$ controls periodicity and $Z_0$ is the seed. The choice of parameters controls if the samples are \textbf{uniform} and \textbf{statistically independent}. LCG exhibit lattice structure that makes it suboptimal for a random number generator 
+    \item \textbf{Accept-Reject Method}
+    \begin{enumerate}
+        \item \textbf{Goal} Want to generate random variates according to a density $f(x)$ but cannot invert $f$ easily
+        \item \textbf{Assume} exists $t(x)$ such that 
+        \[
+            t(x)\geq f(x) \quad \forall x\in I  
+            \qquad \qquad \qquad 
+            r(x) = \frac{1}{c} t(x) \quad c = \int_I t(x) dx
+        \]
+        in other words, $r(x)$ is a probability density computed by normalizing $t(x)$. We assume we can simulate $r(x)$ easily, i.e. generating samples that follows $r(x)$
+        \item \textbf{Procedures} 
+        \begin{enumerate}
+            \item Generate $Y\sim r$
+            \item Generate $U\sim U(0,1)$ independently of $Y$
+            \item If $U\leq f(Y) / t(Y)$, then return $X=Y$; otherwise repeat the procedure
+        \end{enumerate}
+        If $I$ is bounded, then we can pick $r(x)$ as uniform, i.e. 
+        \[
+            t(x) = \max_{x\in I} f(x)  
+        \]
+        the $Y$ variable is uniformly generated, For any $Y$, we compare values of $f(Y)$ and $t(Y)$
+        \item \textbf{Constraint} Usually requires support of $f$ be bunded so we can use uniform as the upper bound function
+    \end{enumerate}
+    \item \textbf{Computing Normal Random Variates} with polar rejection methods
+\end{enumerate}
+
+
+
+\linksection{265}{4.4 Setting the Number of Replications}
+
+
+\begin{defn*}
+    \textbf{q-quantile} are values that partition a finite set of values into q subsets of (nearly) equal sizes. There are q - 1 of the q-quantiles, for each of $0 < k < q$. When cdf of a random variable is known, the q-quantiles are the application of quantile function (inverse function of the cdf) to the values $\{ 1/q, 2/q, \cdots, (q-1)/q \}$
+    \[
+        k-quantile = F^{-1}\left(\frac{k}{q}\right)
+    \]
+    for all $k \in \{1, \cdots, q-1\}$
+\end{defn*}
+
+
+
+\begin{enumerate}
+    \item \textbf{Idea} In Monte Carlo simulation, the larger the number of samples, or replications, the better the quality of estimates. Idea is we compute sample mean/variance, which are unbiased estimators of true mean and true variance
+    \[
+        \overline{X}(n) = \frac{1}{n} \sum_{i=1}^n X_i
+        \qquad 
+        S^2(n) = \frac{1}{n-1} \sum_{i=1}^n (X_i - \overline{X}(n))^2
+    \]
+    where we quantify \textbf{quality of the estimator} by expected values of squared error of estimate 
+    \[
+        \E{(\overline{X}(n) - \mu)^2} = \var{\overline{X}(n)} = \frac{\sigma^2}{n}
+    \]  
+    Increasing sample size $n$ improves the estimates, we compute a reasonable size $n$ by giving out certain guarantees. We can control the absolute error / relative error, s.t. with probability $(1-\alpha)$, 
+    \[
+        |\overline{X}(n) - \mu | \leq \beta 
+        \qquad 
+        \qquad 
+        \frac{|\overline{X}(n) - \mu | }{\mu} \leq \gamma
+    \]
+    we can then derive the appropriate bound to achieve such guarantees
+    \item \textbf{Intuition} The rate of decrease of error as we increase sample size is about $O(1 / \sqrt{n})$. We can overcome this problem by reducing the variance $\sigma^2$ of the samples, i.e. adopting quasi-Monte Carlo 
+\end{enumerate}
+
+
+
+\linksection{269}{4.5 Variance Reduction Techniques}
+
+\begin{enumerate}
+    \item \textbf{Antithetic sampling} 
+    \begin{enumerate}
+        \item \textbf{Idea} is to generate a sequence of paired replications $(X_1^{(i)}, X_2^{(i)})$ for $i=1,\cdots, n$, where the samples are horizontally independent, i.e. $X_j^{(i_1)}$ and $X_k^{(i_2)}$ are independent however we choose $j,k=  1,2$ provided $i_1 \neq i_2$. And the samples are vertically negatively correlated, i.e. for a fixed $i$, $\cov{X_1^{(i)}, X_2^{(i)}} < 0$. To induce negative correlation, we generate $\{U_k\}$ for the first replication in each pair, and then $\{1-U_k\}$ in the second one. So the input streams are negatively correlated and hope that the output stream is negatively correlated. We now show that variance of samples generated with antithetic sampling is reduced 
+        \begin{align*}
+            \var{\overline{X}(n)} 
+            &= \frac{\var{X^{(i)}}}{n}  \\ 
+            &= \frac{\var{X_1^{(i)}} + \var{X_2^{(i)}} + 2\cov{X_1^{(i)}, X_2^{(i)}}}{4n} \\ 
+            &= \frac{\var{X}}{2n} (1 + \rho (X_1, X_2)) \\ 
+        \end{align*}
+        \item \textbf{Limitations} The sampling scheme sometimes produce positive correlation such that the variance increases. This happens when the integrand is non-monotonic. In this case, it maybe that even though the input streams are negatively correlated, but the output streams are positively correlated. For example, applying antithetic sampling to integrate $e^x$ over $(0,1)$ is Ok since exponential is monotonic
+        \item \textbf{Gaussian Samples} The input pair $Z_i \sim N(0,1)$ and $-Z_i$ are negatively correlated
+    \end{enumerate}
+    \item \textbf{Importance Sampling} 
+    \begin{enumerate}
+        \item \textbf{Idea} The idea behind importance sampling is that certain values of the input random variables in a simulation have more impact on the parameter being estimated than others. If these important values are emphasized by sampling more frequently, then the estimator variance can be reduced. It is often used to simulate rare events or sampling from the tail of a distribution. In order to sample from the citical region that is rare but important, we distort the probability measure while still obtain an unbiased estimate
+        \item \textbf{Method} Want to estimate 
+        \[
+            \theta = \E[f]{h(\bX)} = \int h(\bx) f(\bx) d\bx 
+        \]
+        where $\bX$ is a random vector with joint density $f(\bx)$. If we know another density $g$ such that $f(\bx)=0$ whenver $g(\bx)=0$, then we can write 
+        \[
+            \theta = \int \frac{h(\bx) f(\bx)}{g(\bx)} g(\bx) d\bx 
+            = \E[g]{\frac{h(\bX)f(\bX)}{g(\bX)}}
+        \]
+        a change of measure
+        \item \textbf{Choice of biased distribution} $g$ is important in variance reduction. We can write 
+        \[
+            \E[f]{h(\bX)} = \E[g]{h^*(\bX)}
+            \qquad \text{ where } \qquad 
+            h^*(\bX) = \frac{h(\bX)f(\bX)}{g(\bX)}
+        \]
+        assuming $g(\bx) = 0$ if and only if $h(\bx)=0$, i.e. integrating only on the support. The two estimators have the same expectation, but their variances differ
+        \begin{align*}
+            \var[f]{h(\bX)} &= \int h^2(\bx) f(\bx) d\bx - \theta^2  \\ 
+            \var[g]{h^*(\bX)} &= \int h^2(\bx) \frac{f(\bx)}{g(\bx)} f(\bx) d\bx - \theta^2
+        \end{align*}
+        In general we want to find $g^*$ such that 
+        \[
+            g^* = \argmin_g \,\,\var[g]{h^*(\bX)}
+        \]
+        The choice of $g(\bx) = \textstyle\frac{h(\bx)f(\bx)}{\theta}$ would make variance vanish
+        \[
+            \var[g]{h^*(\bX)}
+            = \theta \int h(\bx) f(\bx) d\bx - \theta^2 
+            = \theta \theta - \theta^2 
+            = 0
+        \]
+        but this requires knowledge of $\theta$, the parameter we want to estimate in the first place. To ensure a reduction in variance, we select $g$ such that 
+        \[
+            \begin{cases}
+                g(\bx) > f(\bx) & \text{when the term $h^2(\bx) f(\bx)$ is large} \\ 
+                g(\bx) < f(\bx) & \text{when the term $h^2(\bx) f(\bx)$ is small} \\ 
+            \end{cases}  
+        \]
+        Intuitively, pick $g(\bx)$ such that we reduce value of the integrand if its large to begin with; and to account for AUC for pdf is 1, pick $g(\bx)$ in other cases to increase value of integrand that is small to begin with
+        \item \textbf{Estimating Pi} We can estimate $\pi$ by the following formula
+        \[
+            \pi = \int_0^1 \sqrt{1-x^2} dx = \frac{\pi}{4}  
+            = \int_0^1 h(x) dx = \E[f]{h}
+            \qquad 
+        \]
+        where $h(x) = \sqrt{1-x^2}$ and $f(x) = Unif(0,1)$. To get a better estimator with importance sampling, we pick $\tilde{g}(x)$ as an estimator of the optimal bias distribution
+        \[
+            \tilde{g}(x) = \frac{h(x)f(x)}{\tilde{\theta}}
+            \qquad 
+            \text{where $\tilde{\theta}$ is an estimator of $\theta$}
+            \qquad 
+            \tilde{\theta} = \frac{\sum_k h(s_k)}{L}
+        \]  
+        where we divide $[0,1]$ into $L$ equally spaced subintervals, and $s_k = \textstyle \frac{k-1}{L} + \frac{1}{2L}$, for $k=1,\cdots, L$ 
+    \end{enumerate}
+\end{enumerate}
+
 
 
 

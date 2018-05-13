@@ -1,6 +1,3 @@
-
-
-
 ```sh
 matlab -nodesktop
 ```
