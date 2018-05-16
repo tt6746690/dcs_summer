@@ -42,7 +42,7 @@
 \subsection*{Terminologies}
 
 \begin{enumerate}
-    \item \textbf{Portfolio} a collection of investment held by an entity
+    \item \textbf{Portfolio} a collection of investment
     \item \textbf{Security} a tradable financial asset.
     \item \textbf{Bond} an instrument of indebtedness of the bond issuer to the holders. The issuer owes the holders a debt and is obliged to pay them interest (coupon) or repay the principal at a later date, termed maturity date.
     \begin{enumerate}
@@ -60,6 +60,18 @@
     \item \textbf{Systematic Risk} overall risk that affects all assets like fluctuations in the stock market or interest rates
     \item \textbf{Idosyncratic Risk} risk that is endemic to a particular asset and not a whole investment portfolio. Idiosyncratic risk is generally less predictable. Diversification of an investment portfolio eliminates it somewhat
 \end{enumerate}
+
+
+\begin{defn*}
+    \textbf{Exponential Twisting} distribution shifting technique used in rare-event simulation. For a distribution with density $f$, and parameter $\theta$, the exponentially twisted distribution is defined as follows
+    \[
+        f_{\theta}(x) = \frac{e^{\theta X} f(x)}{\E[f]{e^{\theta X}}}
+    \]
+    \begin{enumerate}
+        \item for $f = \normal{\mu, \sigma^2}$, $f_{\theta} = \normal{\mu + \theta\sigma^2, \sigma^2}$, i.e. effectively shifts the mean of the Gaussian
+    \end{enumerate}
+    Used in importance sampling as an alternative distribution that reduces estimate's variance
+\end{defn*}
 
 
 \end{document}
