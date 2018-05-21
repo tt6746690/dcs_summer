@@ -1,6 +1,6 @@
 
 
-
+####@# 5.1
 
 + research paper
     + idea
@@ -35,3 +35,19 @@
     + why variance reduction for glasserman li doesnt work
 + 2-state
 
+##### 5.21
+
++ stock return
+    + log normal model
+    + not that accurate, underestimate large losses
+    + want thicker tails
++ motivation for H
+    + P(y \leq H_{c(n)}^n)
++ why not model the covariance matrix and in this way sampling uses only 1 layer
+    + 2 level useful
++ numerical analysis computing resources 
+    + loginto appS0, appS1, ... then login to
+    + compS0, compS1, ...
+        + `ssh kjr@compS0.cs.toronto.edu`
++ TODOS:
+    + check 2.1 2.2 the same algorithm

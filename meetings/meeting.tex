@@ -1,0 +1,78 @@
+\documentclass[11pt]{article}
+\input{\string~/.preamble}
+
+\begin{document}
+
+
+\renewcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\renewcommand{\E}[2][]{\mathbb{E}_{#1}\left\{#2\right\}}
+\newcommand{\var}[2][]{var_{#1}\left\{#2\right\}}
+\newcommand{\cov}[1]{cov\{#1\}} 
+\newcommand{\normal}[1]{\mathcal{N}\left(#1\right)}
+\newcommand{\exponents}[1]{exp\left\{#1\right\}}
+\newcommand{\indicator}[1]{\mathbbm{1}_{#1}}
+
+\newcommand{\bmu}{\boldsymbol{\mu}}
+\newcommand{\bpi}{\boldsymbol{\pi}}
+\newcommand{\bTheta}{\boldsymbol{\Theta}}
+\newcommand{\bSigma}{\boldsymbol{\Sigma}}
+\newcommand{\bphi}{\boldsymbol{\phi}}
+
+\newcommand{\calA}{\mathcal{A}}
+\newcommand{\calL}{\mathcal{L}}
+\newcommand{\calE}{\mathcal{E}}
+\newcommand{\calR}{\mathcal{R}}
+\newcommand{\calC}{\mathcal{C}}
+\newcommand{\calD}{\mathcal{D}}
+\newcommand{\calZ}{\mathcal{Z}}
+\newcommand{\bx}{\matr{x}}
+\newcommand{\bt}{\matr{t}}
+\newcommand{\bw}{\matr{w}}
+\newcommand{\bX}{\matr{X}}
+\newcommand{\bZ}{\matr{Z}}
+\newcommand{\bz}{\matr{z}}
+\newcommand{\bu}{\matr{u}}
+
+
+
+\begin{enumerate}
+    \item \textbf{The risk modeling} \\
+    Given 
+    \[
+        y_n = \beta_n^T \calZ + \sqrt{1 - \beta_n^T \beta_n} \epsilon_n
+    \]
+    where $\calZ \sim \normal{0, I_S}$ and $\epsilon \sim \normal{0, I_N}$, the resulting $y_n \sim \normal{0,1}$ as shown below 
+    \[
+        \E{y_n} = \sum_{i} \beta_{n,i} \E{\calZ_i} + \sqrt{1 - \beta_n^T \beta_n} \E{\epsilon_n} = 0
+    \]
+    \begin{align*}
+        \var{y_n} 
+        &= \E{(y_n - \E{y_n})^2} \\
+        &= \E{ (\beta_n^T \calZ + \sqrt{1 - \beta_n^T \beta_n} \epsilon_n)^2 }\\
+        &= \beta_n^T \beta_n \E{(\calZ - 0)^2} + (1-\beta_n^T \beta_n) \E{(\epsilon_n - 0)^2} \\
+        &= \beta_n^T \beta_n \var{\calZ} + (1-\beta_n^T \beta_n) \var{\epsilon_n} \\
+        &= 1
+    \end{align*}
+    \item \textbf{Motivation for threshold between different states $H_{c(n)}^c$} \\
+    The motivation is to model discrete probability in the credit state matrix with a continuous distribution such as the gaussian. In this cawe, we want to set $H_{c(n)}^c$ such that
+    \[
+        p(H_{c(n)}^{c-1}\leq y_n \leq H_{c(n)}^c) = p_{c(n)}^c
+    \]
+    therefore we can write 
+    \[
+        p(y_n \leq H_{c(n)}^c) = \sum_{\gamma = 1}^c p_{c(n)}^{\gamma}
+        \qquad 
+        \overset{y_n \sim \normal{0,1}}{\longrightarrow} 
+        \qquad 
+        \Phi(H_{c(n)}^c) = \sum_{\gamma = 1}^c p_{c(n)}^{\gamma}
+    \]
+    \item \textbf{Confidence interval for monte carlo estimation}
+    \[
+        p(L_N(\calZ, \epsilon)\geq l) \in 
+        p(L_N(\calZ, \epsilon)\geq l) \pm CI
+    \]
+    Idea is that for the two naive algorithms that are purported to be equivalent, the CI should be approximately the same
+\end{enumerate}
+
+\end{document}
+ 
