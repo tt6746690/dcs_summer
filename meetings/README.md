@@ -50,4 +50,22 @@
     + compS0, compS1, ...
         + `ssh kjr@compS0.cs.toronto.edu`
 + TODOS:
-    + check 2.1 2.2 the same algorithm
+    + check 2 simple MC algorithm 2.1 2.2 yield same result 
+        + the result are consistently different, but try 
+            + run on larger sample sizes 
+            + try run 2 algorithm on the same saved parameters, maybe they are different and somehow, however unlikely, effect the result
+        + also some MC estimate in 1 run yield 0 ??!!
+
+##### 5.28
+
++ TODO:
+    + verify 2.1 2.2 again with CI, on large sample sizes
+    + re-read glasserman lee
++ steepest descent
+    + 
+
+
+
+
+
+
