@@ -34,7 +34,7 @@ function [H, BETA, tail, EAD, CN, LGC, CMM, C] = ProblemParams(N, S, loadFixed)
     C = 4; % number of credit states
 
     if(loadFixed)
-            filename = strcat(pwd,'/Experiments/S=',num2str(S),'/params.mat');
+            filename = strcat(pwd, '/Experiments/S=',num2str(S),'/params.mat');
             load(filename); 
     else
 
