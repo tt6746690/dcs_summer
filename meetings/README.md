@@ -61,8 +61,9 @@
 + TODO:
     + verify 2.1 2.2 again with CI, on large sample sizes
     + re-read glasserman lee
-+ steepest descent
-    + 
++ since model is simulated, can compute the real statistics not relying on sampling
++ try different sample size -> observe varied variance ...
++ instead storing mean(...)
 
 
 

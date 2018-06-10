@@ -1,0 +1,21 @@
+TOTAL RUNTIME...35.9219s
+mean
+ 
+ans =
+ 
+[ 0, 0, 0, 0, 0]
+ 
+ 
+ans =
+ 
+0.0
+ 
+var
+ 
+ans =
+ 
+[ 0, 0, 0, 0, 0]
+ 
+ 
+ans =
+ 

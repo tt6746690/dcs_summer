@@ -9,3 +9,6 @@ numerical_methods_in_finance_and_economics_matlab_intro.pdf
 
 # macos
 .DS_store
+
+# jupyter notebooko
+.ipynb_checkpoints
