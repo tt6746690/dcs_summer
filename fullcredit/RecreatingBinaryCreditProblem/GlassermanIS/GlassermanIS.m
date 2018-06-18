@@ -1,12 +1,16 @@
 clear all;
 N = 2500; % Number of creditors
-NZ = 200; % Number of Z samples 
-nE = 200; % Number of epsilion samples to take PER z sample
-NRuns = 1; % Number of times to recompute integral before averaging results
+NZ = 40000; % Number of Z samples 
+nE = 2; % Number of epsilion samples to take PER z sample
+NRuns = 5; % Number of times to recompute integral before averaging results
 S = 5; % Dimension of Z
+
 
 a = zeros(1,NRuns);
 v = zeros(1,NRuns);
+muci = zeros(2,NRuns);     % CI for MC estimate 
+sigmaci = zeros(2, NRuns); % CI for MC estimate variance
+
 
 for r=1:NRuns 
     totalT = cputime;
@@ -79,8 +83,16 @@ for r=1:NRuns
     LR = LRE.*LRZ;
     Loss = reshape(Loss,1,nE*NZ);
     l = double(Loss > tail).*LR;
-    a(r) = mean(vpa(l));
-    v(r) = var(vpa(l));
+
+    % put to store
+    alpha_ = 0.05;
+    [m, s, mci, sci] = normfit(l, alpha_);
+    a(r) = vpa(m);
+    v(r) = vpa(s);
+    muci(:,r) = vpa(mci);
+    sigmaci(:,r) = vpa(sci);
+    % a(r) = mean(vpa(l));
+    % v(r) = var(vpa(l));
     clear C;
     clear CMM;
     clear CN;
@@ -107,10 +119,17 @@ for r=1:NRuns
 end
 
 %[vpa(a); vpa(v)]'
+% disp('mean')
+% vpa(a)
+% vpa(mean(a))
+% disp('var')
+% vpa(v)
+% vpa(mean(v))
+
 disp('mean')
 vpa(a)
-vpa(mean(a))
-disp('var')
-vpa(v)
-vpa(mean(v))
+vpa(muci)
 
+disp('sqrt(variance)')
+vpa(v)
+vpa(sigmaci)
