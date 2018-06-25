@@ -11,7 +11,7 @@
             + works well when systematic risk highly dependent cross oligors
         + inner level: exponential twisting to default probabilities conditioned on the systematic factors
             + works well, and maybe sufficient when obligors are weakly dependent
-    + think about using its metric, specifically, a plot of plain MC and IS where x-axis is the tail thresholds and the y-axis is the corresponding simulated probability. If we do this for many replications, we can see the effect of variance reduction with IS methods. We can utilize this metric in evaluating the different models implemented in Adam Sturge's paper
+    + think about using its metric, specifically, a plot of plain MC and IS where x-axis is the tail thresholds and the y-axis is the corresponding simulated probability. If we do this for many replications, we can see the effect of variance reduction with IS methods by plotting curves for the simulated probabilities and 95% CI. We can utilize this metric in evaluating the different models implemented in Adam Sturge's paper
 
 + [2015_new_approaches_to_importance_sampling_for_portfolio_credit_risk_valuation](2015_new_approaches_to_importance_sampling_for_portfolio_credit_risk_valuation.pdf)
     + Chen Zhe ?

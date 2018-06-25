@@ -2,6 +2,8 @@ function [pTheta,thetaVec] = GlassermanPTheta(pncz,weights,tail)
     [N,~,NMC] = size(pncz);
     pTheta = pncz;
     thetaVec = zeros(1,NMC);
+
+    % lambda to compute psi
     psi = @(theta,pnc) sum(log(sum(pnc.*exp(weights.*theta),2)),1);
     for i=1:NMC
         pnc = pncz(:,:,i);

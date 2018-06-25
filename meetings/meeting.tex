@@ -111,5 +111,51 @@
     \]
 \end{enumerate}
 
+
+\newpage 
+
+\subsection*{Glasserman\&Li Algorithm}
+
+\begin{enumerate}
+    \item Outer Level IS for sysmatic risk $Z$ 
+    \begin{enumerate}
+        \item Find shifted parameter $\mu$ for outer IS for $Z$
+        \item Sample $Z \sim \normal{\mu, I}$ 
+    \end{enumerate}
+    \item Inner Level IS for each default indicators $Y_k$ 
+    \begin{enumerate}
+        \item Calculate conditional default probabilities $p_k(Z)$ for $k=1,\cdots, m$
+        \[
+            p_k(Z) = P(Y_k=1 | Z) = p(X_k > x_k | Z) = P(a_k Z + b_k \epsilon_k > \Phi^{-1}(1-p_k) | Z)
+        \]
+        \item Compute the twisted parameters $\theta_x(Z)$ 
+        \[
+            \theta_x(Z) = 
+            \begin{cases}
+                \text{solution to } \frac{\partial}{\partial \theta}\psi_m(\theta, Z) = x & \psi'(0) = \E[p]{L|Z} = \sum_{k=1}^m p_k(Z) c_k < x \\ 
+                0 & otherwise \\ 
+            \end{cases}    
+        \]
+        \item Compute default indicators (bernoulli) from twisted conditional default probabilities
+        \[
+            p_{k,\theta_x(Z)} (Z) = \frac{p_k(Z) e^{\theta_x(Z)c_k}}{1 + p_k(Z)(e^{\theta_x(Z)c_k} - 1)}
+            \qquad 
+            \qquad 
+            k = 1,\cdots, m
+        \]
+        \item Compute Loss $L = c_1 Y_1 + \cdots + c_m Y_m$ under twisted distribution
+    \end{enumerate}
+    \item Return the estimator of tail proabilities
+    \[
+        \mathbbm{1}_{L>x} e^{\theta_x(Z)L + \psi(\theta_x(Z), Z)} e^{ -\mu^T Z + \mu^T \mu /2 }
+    \]
+    Therefore,
+    \[
+        P(L > x) = \E[Z\sim \normal{\mu, I} \, Y_k \sim p_{k, \theta_x(Z)}]{
+            \mathbbm{1}_{L>x} e^{\theta_x(Z)L + \psi(\theta_x(Z), Z)} e^{ -\mu^T Z + \mu^T \mu /2 }
+        }
+    \]
+\end{enumerate}
+
 \end{document}
  
