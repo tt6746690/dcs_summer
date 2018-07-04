@@ -1,3 +1,4 @@
+% computes the shifted outer level distribution
 function [pTheta,thetaVec] = GlassermanPTheta(pncz,weights,tail)
     [N,~,NMC] = size(pncz);
     pTheta = pncz;
@@ -7,7 +8,7 @@ function [pTheta,thetaVec] = GlassermanPTheta(pncz,weights,tail)
     psi = @(theta,pnc) sum(log(sum(pnc.*exp(weights.*theta),2)),1);
     for i=1:NMC
         pnc = pncz(:,:,i);
-
+        
         threshold = sum(sum(weights.*pnc,2),1);
         if tail > threshold
             energy = @(theta) psi(theta,pnc) - tail*theta;

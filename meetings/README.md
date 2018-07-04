@@ -74,3 +74,43 @@
     + chapter 3, (maybe 4)
 + Look at Glasserman Li impl
     + see if the likehood is adjusted ... properly in (Glasserman-LI - 21)
+
+
+##### 6.25
+
++ look carefully at likelihood for the outer level change of normal distribution
+    + see if expected value of likelihood sum up to 1
++ points 
+    + changing `weights = EAD .* LGC` to `weights = LGC` only is not the solution 
+        + varying in tail `l=0` to `l=0.99` doesn't change the shifted mean `mu`
+        + but the original algorithm seems to have extreme `mu` (i.e. -2) even when `l=0`, (should expect no shift)
+            + so a problem with finding the `mu`
+            + TODO: test for this, using original weights, vary tail, expect change in shifted mu 
+    + values of `mu`, i.e. shifted mean for `Z ~ N(mu, I_S)` effect MC estimates
+        + maybe because number of samples for Z is not sufficient to offset the shift
+        + so need to increase the number of samples for Z, does it fix the shifting problem?
+    + glasserman&li works when not shifting `mu ~ 0`
+        + corresponds to adam sturge's experiment
+
++ 2 sources of problem 
+    + algorithm for computing shifted mean `mu`
+        + effect variance reduction
+    + likelihood value not accurate
+        + regardless of values of `mu`, likelihood should compensate for the shift,
+        + hypothesis: did not do sufficient sampling of `Z`, so that the likelihood does not compensate for the shift
+            + yes, more sampling 
+
+
+```
+300 x 300   tail=0.2 mu = [1 1 1 1 1]
+MC estimates
+[ 5.1025001679699536553765663734218e-63, 5.5629483856550938644634225146056e-71, 1.7864339219399409372569884482903e-57, 1.7612394424026581269456982503595e-56, 1.6585676328109105345101462979167e-56]
+
+
+600 x 600   tail=0.2 mu = [1 1 1 1 1]
+MC estimates
+[ 9.9972615278898223117247618271886e-51, 2.4070118050647296169565515181374e-48, 3.5127860351210270909760405584652e-44, 1.6466536359880207644993939514792e-36, 9.0259095087223786695774857882964e-33]
+
+18000 x 2   tail=0.2 mu = [1 1 1 1 1]
+[ 1.0998300229485849942146096735455e-33, 4.3623177904304046380036512131288e-33, 0.00000000000000000021111884993755124124873635000348, 0.00000000000000000000000000194456616909937433519607954134, 2.4381060687116966876175518020212e-38]
+```

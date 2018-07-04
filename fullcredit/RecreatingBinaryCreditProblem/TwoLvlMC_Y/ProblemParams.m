@@ -49,7 +49,7 @@ function [H, BETA, tail, EAD, CN, LGC, CMM, C] = ProblemParams(N, S, loadFixed)
         % Credit state matrix N x C. Contains probs of each creditor to move to each credit state for THIS timestep
         CMM = zeros(N,C);
         CMM(:,1) = p;
-        CMM(:,2) = 1-p;  % no values for column 3,4, why?
+        CMM(:,2) = 1-p;  % no values for column 3,4, why? ANS: since state binary
         % 0.0096    0.9904         0         0
         % 0.0098    0.9902         0         0
         % 0.0100    0.9900         0         0
