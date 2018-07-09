@@ -19,11 +19,18 @@ for r=1:NRuns
     totalT = cputime;
     disp(strcat('RUN NUMBER',num2str(r)))
     %Initialize data
-    [H, BETA, tail, EAD, CN, LGC, CMM, C] = ProblemParams(N, S, true);
+    [H, BETA, tail, EAD, CN, LGC, CMM, C] = ProblemParams(N, S, false);
     
     disp('BEGIN FINDING SHIFTED MEAN')
     t = cputime;
     [mu,~] = GlassermanMuCon(zeros(S,1),0, H, BETA, tail, EAD, LGC);
+    mu
+    % verify gradient of mu by computing the gradient
+    % yield array of length 5 containing -0.2 as gradient for Z
+    % pnc = ComputePNC(H,BETA,mu);
+    % gradZ = ComputeGradZ(pnc, H, BETA, tail, EAD, LGC, mu);
+    % gradZ
+
     % mu is optimal shifted parameter for sampling Z from N(mu, I_S)
     %   where mu has dimension (Sx1)
     disp(strcat('FINISH FINDING SHIFTED MEAN...',num2str(cputime - t),'s'))
@@ -139,6 +146,7 @@ for r=1:NRuns
     LR = LRE.*LRZ;
     Loss = reshape(Loss,1,nE*NZ);
     l = double(Loss > tail).*LR;
+    % l = double(Loss >= tail).*LR;
 
     % put to store
     alpha_ = 0.05;

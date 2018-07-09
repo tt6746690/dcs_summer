@@ -2,6 +2,9 @@
 % solving a minmax problem
 function [mu] = GlassermanMu(Z0,H,BETA,tail,EAD,LGC)
     options = optimset('LargeScale','off','MaxFunEvals',15000,'Display','final-detailed','FinDiffType','central','TolX',1.0e-15,'TolFun',1.0e-15,'MaxIter',15000);    
+
+    % fminsearch: 
+    %   min finding of unconstrained multivariable function using derivative-free methods
     [mu,E,exitflag,output] = fminsearch(@(z) energy(z), Z0, options)
     
     function E = energy(z)

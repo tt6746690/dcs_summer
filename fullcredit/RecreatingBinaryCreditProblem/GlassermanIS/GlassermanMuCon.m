@@ -1,6 +1,10 @@
+% fmicon
+% Find minimum of constrained nonlinear multivariable function
 function [ mu, thetaOpt ] = GlassermanMuCon(z0, theta0, H, BETA, tail, EAD, LGC )
 
     weights = EAD.*LGC;
+    % weights = LGC;
+
     v0 = [z0;theta0];
     function [p] = psi(theta,pnc,weights)
         p = sum(log(sum(pnc.*exp(weights.*theta),2)),1);
@@ -171,7 +175,7 @@ function [ mu, thetaOpt ] = GlassermanMuCon(z0, theta0, H, BETA, tail, EAD, LGC 
     HessianFcn = @(v,lambda) hessianE(v, lambda, H, BETA, tail, weights);
     options = optimoptions ('fmincon','Algorithm','interior-point','MaxFunctionEvaluations',13000,...
         'SpecifyObjectiveGradient',true,'SpecifyConstraintGradient',true,'CheckGradients',false,...
-        'maxIter',3000); %,'HessianFcn',HessianFcn
+        'maxIter',3000, 'Display', 'off'); %,'HessianFcn',HessianFcn
     [v,fval,exitflag,output,lambda,grad,hessian] = fmincon(Energy,v0,[],[],[],[],[],[],Condition,options)
     
     thetaOpt = v(end);

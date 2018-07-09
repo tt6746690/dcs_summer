@@ -81,7 +81,6 @@
 %     for any nonzero margin specified, no matter how small, with a sufficiently large sample there will be a very high probability that the average of the observations will be close to the expected value; that is, within the margin.
 
 
-
 \begin{frame}{MC - Variance Reduction}
 We evaluate an estimator by computing
 \begin{align*}
@@ -160,56 +159,6 @@ We are interested in the probability that a given portfolio of lenders will resu
     &= \E[\bZ \sim \normal{0, I_S}\,\, Y_k \sim p_k]{\mathbbm{1}_{L \geq l}}
 \end{align*}
 \end{frame}
-
-
-
-% \section{Methodology}
-
-% %---------------------------------------------------------
-% %Highlighting text
-% \begin{frame}
-% \frametitle{Methodology}
-% % notes: A key element of any model of portfolio credit risk is a mechanism for capturing dependence among obligors.
-% \textbf{Gaussian Copula Factor Model}
-% \vspace{0.1in}
-
-% In this framework, credit risks are factored into \textbf{systematic risks} and \textbf{idiosyncratic risks}.
-% \vspace{0.1in}
-
-% \begin{block}{Systematic Risk}
-% Inherent in the \alert{aggregate market} that cannot be solved by diversification. Some common sources include recessions, wars, interest rates.
-% \end{block}
-
-% \begin{alertblock}{Idiosyncratic Risk}
-% Associated with \alert{a particular asset} such as a stock and has nothing to do with market risk. Common Sources include a company's dependency on its CEO, location of operations.
-% \end{alertblock}
-
-% \end{frame}
-% % Two level importance sampling
-
-% % Two level importance sampling 
-% \begin{frame}
-% \frametitle{Methodology}
-% To model dependence among obligors, we need to introduce dependence among the default indicators $Y_{1}$,..., $Y_{m}$. In this copula model, dependence is introduced through a multivariate normal vector ($X_{1}$,..., $X_{m}$). Each default indicator is represented as
-% \begin{align*}
-%     % xk can be viewed as default boundary
-%     Y_{k} = 1_{{X_{k} > x_{k}}},     k = 1,..., m 
-% \end{align*}
-% %\text{x_{k} is chosen to match the marginal default probability that kth %obligor defaults}
-% \begin{align*}
-%     X_k = a_{k1}Z_{1} + ... + a_{kd}Z_{d} + b_k\epsilon_{k}
-% \end{align*}
-% in which\\
-% \begin{itemize}
-% \item $Z_{1}$,...,$Z_{d}$ are systematic risk factors
-% %, each having an      \mathbbm{N(0, 1)} distribution;
-% \item $\epsilon_{k}$ is an idiosyncratic risk associated with the kth obligor
-% %, also with \mathbbm{N(0, 1)} distribution;
-% \item $a_{k1}$,...,$a_{kd}$, $b_{k}$ are the factor loadings for the kth obligor
-% %,\\ with ${a_{k1}}^2$ +...+ ${a_{kd}}^2 \leq 1$;
-% %\item $b_{k}$ = \sqrt{1-(${a_{k1}}^2$ +...+ ${a_{kd}}^2$)} so that $X_(k)$ %is \mathbbm{N(0, 1)}
-% \end{itemize}
-% \end{frame}
 
 
 \end{document} 

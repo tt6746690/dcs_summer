@@ -3,11 +3,18 @@ N = 2500; % Number of creditors
 NZ = 1; % Number of samples from MC
 nE = 10000; % Number of epsilion samples to take PER z sample
 NRuns = 1; % Number of times to recompute integral before averaging results
-S = 1; % Dimension of Z
+S = 5; % Dimension of Z
 C = 4;
+
+% FID = fopen('allmu1s.txt', 'w');
+% FID = fopen('allmu2s.txt', 'w');
+FID = fopen('allmu15s.txt', 'w');
   
 a = zeros(1,NRuns);
 v = zeros(1,NRuns);
+
+muci = zeros(2,NRuns);     % CI for MC estimate 
+sigmaci = zeros(2, NRuns); % CI for MC estimate variance
   
 az = zeros(1,NZ);
 vz = zeros(1,NZ);
@@ -21,7 +28,12 @@ try
 
         disp('BEGIN FINDING SHIFTED MEAN')
         t = cputime;
-        [mu,~] = GlassermanMuCon(zeros(S,1),0, H, BETA, tail, EAD, LGC);
+        % [mu,~] = GlassermanMuCon(zeros(S,1),0, H, BETA, tail, EAD, LGC);
+        % mu = [1 1 1 1 1];
+        % mu = [2 2 2 2 2];
+        mu = [1.5 1.5 1.5 1.5 1.5];
+        mu = reshape(mu, [5,1]);
+        mu
         disp(strcat('FINISH FINDING SHIFTED MEAN...',num2str(cputime - t),'s'))
         
         zIndex = 1;
@@ -90,9 +102,22 @@ try
             l = double(Loss > tail).*LR;
             az(zIndex) = mean(vpa(l));
             %vz(zIndex) = vpa(var(l));
-            
-            if (mod(zIndex,10000) == 0)
-              vpa(mean(az))
+
+            % with normfit
+            % alpha_ = 0.05;
+            % [m, s, mci, sci] = normfit(l, alpha_);
+            % a(r) = vpa(m);
+            % v(r) = vpa(s);
+            % muci(:,r) = vpa(mci);
+            % sigmaci(:,r) = vpa(sci);
+
+            if (mod(zIndex,10) == 0)
+                % mc estimate: mean of per Z sampled loss
+                fprintf(FID, '%d:%d\n', mean(az), var(az));
+                fprintf('%d:%d\n', mean(az), var(az));
+                % az
+                % vpa(mean(az))
+                % vpa(var(az))
             end
             zIndex = zIndex + 1;
 %             clear C;
@@ -135,3 +160,5 @@ vpa(mean(a))
 %disp('var')
 %vpa(v)
 %vpa(mean(v))
+
+

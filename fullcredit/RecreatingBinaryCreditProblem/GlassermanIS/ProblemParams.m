@@ -25,6 +25,7 @@ else
 
     LGC = zeros(N, C);
     LGC(:,1) = floor(5*(1:N)/N).^2';
+    % LGC(:,1) = ((1:N)/N).^2';
 
     cumCMM = cumsum(CMM, 2);
     %H_indc = zeros(C, C);
