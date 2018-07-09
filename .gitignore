@@ -6,6 +6,9 @@ numerical_methods_in_finance_and_economics_matlab_intro.pdf
 *.log
 *.out
 *.synctex.gz
+*.snm
+*.toc
+*.nav
 
 # macos
 .DS_store

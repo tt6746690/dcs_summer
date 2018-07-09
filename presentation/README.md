@@ -8,8 +8,9 @@
     + 1 ending 
     + 1 overview 
     + 1 finance terminology + definition stuff
-    + 1 MC
-    + 1 IS
+    + numerical tools
+        + 1 MC
+        + 1 IS
     + ~2 problem setup 
         + copula model
         + what is the problem

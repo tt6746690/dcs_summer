@@ -100,17 +100,34 @@
         + hypothesis: did not do sufficient sampling of `Z`, so that the likelihood does not compensate for the shift
             + yes, more sampling 
 
+##### 7.2
 
-```
-300 x 300   tail=0.2 mu = [1 1 1 1 1]
-MC estimates
-[ 5.1025001679699536553765663734218e-63, 5.5629483856550938644634225146056e-71, 1.7864339219399409372569884482903e-57, 1.7612394424026581269456982503595e-56, 1.6585676328109105345101462979167e-56]
+1. even with the wrong `mu`, MC of likelihood should still converge to 1, for large enough sample size for `E` and `Z`
+    + test with running the algorithm with large enough iterations, ... after setting the `mu` to 1, 2
+2. Investigate more into how `mu` is picked,
+    + potential problems
+        + `mu` is not a local max, so the method didnt work 
+            + verify this by conmputing the gradient and see if the 1st order derivative is 0 and 2nd order gradient <0
+        + `mu` is a local max, but not the one we want
+            + dunno how
+    + run the algorithm with 
+        + constarinted optimization 
+        + unconstrainted steepest ascent
+    + do some plotting in 1d/2d case
 
+##### 7.4 meeting with kjr on presentation
 
-600 x 600   tail=0.2 mu = [1 1 1 1 1]
-MC estimates
-[ 9.9972615278898223117247618271886e-51, 2.4070118050647296169565515181374e-48, 3.5127860351210270909760405584652e-44, 1.6466536359880207644993939514792e-36, 9.0259095087223786695774857882964e-33]
-
-18000 x 2   tail=0.2 mu = [1 1 1 1 1]
-[ 1.0998300229485849942146096735455e-33, 4.3623177904304046380036512131288e-33, 0.00000000000000000021111884993755124124873635000348, 0.00000000000000000000000000194456616909937433519607954134, 2.4381060687116966876175518020212e-38]
-```
++ presentation structure
+    + MC + IS
+        + introduction, definitions 
+    + fiannce background
+        + definitions
+        + copula factor model
+    + 2 lvl IS applied to copula factor model
+        + rare event simulation ...
+        + emphasis on why/how 2 lvl IS works 
+        + sketch of algorithm 
+    + research problem and approaches
+        + downward bias of estimates with Glasserman&Li algorithm
+        + need large enough sample for computing `mu` ?
+        + `mu` did not find the right one ?

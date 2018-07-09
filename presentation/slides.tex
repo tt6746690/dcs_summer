@@ -1,0 +1,215 @@
+\documentclass{beamer}
+
+\usepackage{amsmath}
+\usepackage{amsbsy}
+\usepackage{bbm}
+
+\def\MLine#1{\par\hspace*{-\leftmargin}\parbox{\textwidth}{\[#1\]}}
+\usepackage[utf8]{inputenc}
+
+\usepackage{utopia} %font utopia imported
+\usepackage{lmodern}
+
+\newcommand{\matr}[1]{\mathbf{#1}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\E}[2][]{\mathbb{E}_{#1}\left\{#2\right\}}
+\newcommand{\var}[2][]{var_{#1}\left\{#2\right\}}
+\newcommand{\cov}[1]{cov\{#1\}} 
+\newcommand{\normal}[1]{\mathcal{N}\left(#1\right)}
+\newcommand{\exponents}[1]{exp\left\{#1\right\}}
+\newcommand{\indicator}[1]{\mathbbm{1}_{#1}}
+
+\newcommand{\bmu}{\boldsymbol{\mu}}
+\newcommand{\bpi}{\boldsymbol{\pi}}
+\newcommand{\bTheta}{\boldsymbol{\Theta}}
+\newcommand{\bSigma}{\boldsymbol{\Sigma}}
+\newcommand{\bphi}{\boldsymbol{\phi}}
+
+\newcommand{\calA}{\mathcal{A}}
+\newcommand{\calL}{\mathcal{L}} 
+\newcommand{\calE}{\mathcal{E}}
+\newcommand{\calR}{\mathcal{R}}
+\newcommand{\calC}{\mathcal{C}}
+\newcommand{\calD}{\mathcal{D}}
+\newcommand{\bx}{\matr{x}}
+\newcommand{\bt}{\matr{t}}
+\newcommand{\bw}{\matr{w}}
+\newcommand{\bX}{\matr{X}}
+\newcommand{\bZ}{\matr{Z}} 
+\newcommand{\bz}{\matr{z}}
+\newcommand{\bu}{\matr{u}}
+\newcommand{\bY}{\matr{Y}}
+
+\usetheme{Madrid}
+\usecolortheme{default}
+
+\title[]{Monte Carlo Simulation on Credit Risk}
+\author[Loora, Peiqi]{Loora Li \and Peiqi Wang \and Zeneng Fan \and Xiaoye Yuan \and Eris Zhang}
+\date[July 5th, 2018]{Supervisor: Prof. Ken Jackson }
+
+
+\begin{document}
+
+\frame{\titlepage}
+\begin{frame}
+    \frametitle{Overview}
+    \tableofcontents
+\end{frame}
+
+
+%---------------------------------------------------------
+\section{Monte Carlo Simulation}
+%---------------------------------------------------------
+
+
+\begin{frame}
+\frametitle{MC - Monte Carlo Simulation}
+\begin{enumerate} 
+    \item To simulate some unknown value $\mu$, we interpret $\mu$ probabilistically, i.e. expresses it as the expected value of a function of some random variable $X$
+    \[
+        \mu = \E[\bX \sim p(\bX)]{f(\bX)}
+    \]
+    \item Sample $X_1, \cdots, X_n \overset{i.i.d.}{\sim} p$ , and compute the Monte Carlo (MC) estimator
+    \[
+        \hat{\mu} = \frac{1}{n} \sum_{i=1}^n f(\bX_i)
+    \]
+\end{enumerate}    
+\end{frame}
+
+
+% explain LLN:
+%     for any nonzero margin specified, no matter how small, with a sufficiently large sample there will be a very high probability that the average of the observations will be close to the expected value; that is, within the margin.
+
+
+
+\begin{frame}{MC - Variance Reduction}
+We evaluate an estimator by computing
+\begin{align*}
+    \E{\hat{\mu}} &= \frac{1}{n} \sum_{i=1}^n \E{f(\bX_i)} = \mu \quad \text{(unbiased)} \\ 
+     \var{\hat{\mu}} &= \frac{1}{n^2}\sum_{i=1}^n \var{f(\bX_i)} = \frac{\sigma^2}{n}
+\end{align*}
+where $\E{\bX_i} = \mu$ and $\var{\bX_i}=\sigma^2$. Intuitively, estimator is more precise, i.e. smaller CI, with decreased variance. The strategies and trade-offs for variance reduction varies
+\begin{enumerate}
+    \item Increase sample size $n$ comes at increased runtime cost
+    \item Decrease random variable's variance, the tricks!
+\end{enumerate}
+\end{frame}
+
+
+
+
+
+\begin{frame}{MC - Importance Sampling}
+\textbf{Motivation} In the case of estimating rare events, we want to compute $\mu = \E{f(\bX)}$ where $f(\bX)$ is close to zero out side of a region $\mathcal{D}$. We can exploit this to do variance reduction with \textbf{importance sampling}
+\begin{enumerate}
+    \item Find an alternate \textit{proposal distribution} to sample $X_1, \cdots, X_n \sim q(\bX)$ such that the \textbf{variance is reduced}
+    \[
+        \var[\bX \sim q]{\frac{f(\bX)p(\bX)}{q(\bX)}} < 
+        \var[\bX \sim p]{f(\bX)}
+    \]
+    \item Adjust the estimates to account for sampling from the $q(\bX)$ such that the estimator remains \textbf{unbiased}
+    \begin{align*}
+    \mu = \E[\bX \sim p]{f(\bX)} 
+    &= \int_{\mathcal{D}} f(\bx) p(\bx) d\bx \\
+    &= \int_{\mathcal{D}} \frac{f(\bx)p(\bx)}{q(\bx)} q(\bx) d\bx 
+    = \E[\bX \sim q]{\frac{f(\bX)p(\bX)}{q(\bX)}}
+\end{align*}
+\end{enumerate}
+\end{frame}
+
+%---------------------------------------------------------
+\section{Problem Setup}
+%---------------------------------------------------------
+ 
+\begin{frame}{Problem Setup - Finance Terminologies}
+\begin{enumerate}
+    \item \textbf{Portfolio} A collection of investments
+    \item \textbf{Credit Risk} Risk of default in a portfolio
+    \item \textbf{Systemic Risk} Overall risk that affects all assets, i.e. government policy, international economic forces, or acts of nature.
+    \item \textbf{Idiosyncratic Risk} Risk endemic to a particular asset, i.e. aspects of a company
+\end{enumerate}
+\end{frame}
+
+
+
+\begin{frame}{Problem Setup - A Credit Risk Model}
+\textbf{Guassian Copula Factor Model} is a model that measure credit risk by modeling a set of underlying risk factors as Gaussian random variables. Let 
+\begin{enumerate}
+    \item $Y_k$ be the default indicator for the $k$th borrower, i.e. 1 if $k$th borrower defaults and 0 otherwise. Given systematic risk factors $Z_i \sim \normal{0,I_S}$ and idiosyncratic risk factors $\epsilon_k \sim \normal{0,I_N}$, we have
+    \[
+        Y_k = \mathbbm{1}_{X_k > x_k} \qquad \text{$x_k$ picked to match $p_k$}
+    \]
+    where $l$ is the tail probability supplied, and $X_k$ is a weighted sum of the risk factors
+    \[
+        X_k = \boldsymbol{\beta}_k^T \matr{Z}  + \sqrt{1 - \boldsymbol{\beta}_k^T \boldsymbol{\beta}_k} \epsilon_k
+    \]
+    \item $p_k$ be probability of default for $k$th borrower
+    \item $c_k$ be loss resulting from default of $k$th borrower 
+    \item $L$ be total loss from defaults
+    \[
+        L = c_1 Y_1 + \cdots + c_N Y_N    
+    \]
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}{Problem Setup - MC+IS applied to Risk Model}
+We are interested in the probability that a given portfolio of lenders will result in a loss greater than a specified amount. And we use Monte Carlo simulation to estimate this probability
+\begin{align*}
+    P(L \geq l) 
+    &= \E[\bZ \sim \normal{0, I_S}\,\, Y_k \sim p_k]{\mathbbm{1}_{L \geq l}}
+\end{align*}
+\end{frame}
+
+
+
+% \section{Methodology}
+
+% %---------------------------------------------------------
+% %Highlighting text
+% \begin{frame}
+% \frametitle{Methodology}
+% % notes: A key element of any model of portfolio credit risk is a mechanism for capturing dependence among obligors.
+% \textbf{Gaussian Copula Factor Model}
+% \vspace{0.1in}
+
+% In this framework, credit risks are factored into \textbf{systematic risks} and \textbf{idiosyncratic risks}.
+% \vspace{0.1in}
+
+% \begin{block}{Systematic Risk}
+% Inherent in the \alert{aggregate market} that cannot be solved by diversification. Some common sources include recessions, wars, interest rates.
+% \end{block}
+
+% \begin{alertblock}{Idiosyncratic Risk}
+% Associated with \alert{a particular asset} such as a stock and has nothing to do with market risk. Common Sources include a company's dependency on its CEO, location of operations.
+% \end{alertblock}
+
+% \end{frame}
+% % Two level importance sampling
+
+% % Two level importance sampling 
+% \begin{frame}
+% \frametitle{Methodology}
+% To model dependence among obligors, we need to introduce dependence among the default indicators $Y_{1}$,..., $Y_{m}$. In this copula model, dependence is introduced through a multivariate normal vector ($X_{1}$,..., $X_{m}$). Each default indicator is represented as
+% \begin{align*}
+%     % xk can be viewed as default boundary
+%     Y_{k} = 1_{{X_{k} > x_{k}}},     k = 1,..., m 
+% \end{align*}
+% %\text{x_{k} is chosen to match the marginal default probability that kth %obligor defaults}
+% \begin{align*}
+%     X_k = a_{k1}Z_{1} + ... + a_{kd}Z_{d} + b_k\epsilon_{k}
+% \end{align*}
+% in which\\
+% \begin{itemize}
+% \item $Z_{1}$,...,$Z_{d}$ are systematic risk factors
+% %, each having an      \mathbbm{N(0, 1)} distribution;
+% \item $\epsilon_{k}$ is an idiosyncratic risk associated with the kth obligor
+% %, also with \mathbbm{N(0, 1)} distribution;
+% \item $a_{k1}$,...,$a_{kd}$, $b_{k}$ are the factor loadings for the kth obligor
+% %,\\ with ${a_{k1}}^2$ +...+ ${a_{kd}}^2 \leq 1$;
+% %\item $b_{k}$ = \sqrt{1-(${a_{k1}}^2$ +...+ ${a_{kd}}^2$)} so that $X_(k)$ %is \mathbbm{N(0, 1)}
+% \end{itemize}
+% \end{frame}
+
+
+\end{document} 
