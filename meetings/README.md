@@ -145,7 +145,54 @@
                     0.3000
                     0.6705
                     41.0052
+            ```
+        + unconstrainted steepest ascent
+    + do some plotting in 1d/2d case
 
+##### 7.4 meeting with kjr on presentation
+
++ presentation structure
+    + MC + IS
+        + introduction, definitions 
+    + fiannce background
+        + definitions
+        + copula factor model
+    + 2 lvl IS applied to copula factor model
+        + rare event simulation ...
+        + emphasis on why/how 2 lvl IS works 
+        + sketch of algorithm 
+    + research problem and approaches
+        + downward bias of estimates with Glasserman&Li algorithm
+        + need large enough sample for computing `mu` ?
+        + `mu` did not find the right one ?
+
+
+##### 7.9 
+
+
++ talk feedback
+    + plot: make dots larger, dots color ...
+    + solid intro?
+        + add some example, estimating pi
+    + prepare the talk to know what to say next
+    + highlight beginning 
+        + interest ...
+        + motivation ...
+            + definition, about how portfolio made up of loans, not all companies is not gonna pay back, want to know the likelihood of default
+    + `mu` symbol used twice ...
+        + change first one 
+    + background
+        + mention adam thesis, wrong result, tie it back
++ todo
+    + see `fmincon` ... hessian semi-definite...
+    + run longer for likelihood
+
+
+
+
+
+
+<!-- 
 grad =
 
     0.4836
@@ -218,24 +265,4 @@ eig(hessian) =
     0.1775
     0.3642
     0.5604
-    7.9028
-            ```
-        + unconstrainted steepest ascent
-    + do some plotting in 1d/2d case
-
-##### 7.4 meeting with kjr on presentation
-
-+ presentation structure
-    + MC + IS
-        + introduction, definitions 
-    + fiannce background
-        + definitions
-        + copula factor model
-    + 2 lvl IS applied to copula factor model
-        + rare event simulation ...
-        + emphasis on why/how 2 lvl IS works 
-        + sketch of algorithm 
-    + research problem and approaches
-        + downward bias of estimates with Glasserman&Li algorithm
-        + need large enough sample for computing `mu` ?
-        + `mu` did not find the right one ?
+    7.9028 -->
