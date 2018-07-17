@@ -157,13 +157,47 @@
     \]
 \end{enumerate}
 
+\newpage 
+\subsection*{Optimization}
+
+Want to solve for 
+\[
+    \max_x \min_y f(x, y)    
+\]
+Same as 
+\[
+    \max_x f(x, \hat{y}(x))
+    \quad \text{where} \quad 
+    \hat{y}(x) = \argmin_y f(x, y)
+\]
+Simply we write as a function of 1 variable
+\[
+    \max_x \hat{f}(x)    
+    \quad \text{where}\quad 
+    \hat{f}(x) = f(x, \hat{y}(x))
+\]
+Want to compute the 1st order and 2nd order derivatives
+\[
+    \hat{f}'(x) = \frac{\partial f}{\partial x} f(x, \hat{y}(x)) + \frac{\partial f}{\partial y} f(x, \hat{y}(x)) \hat{y}'(x)
+\]
+Want to compute $\hat{y}'(x)$ first find critical points
+\[
+    \frac{\partial f}{\partial y} f(x, y) |_{y=\hat{y}(x)} = 0
+\]
+Solve for the function
+\[
+    f_{yx} = \frac{\partial}{\partial x} \frac{\partial}{\partial y} f(x, y) |_{y=\hat{y}(x)}
+\]
+Solve for $\hat{y}'(x)$ 
+\[
+    f_{yx}(x, \hat{y}(x)) + f_{yy}(x, \hat{y}(x)) \hat{y}'(x) = 0
+    \quad \rightarrow \quad 
+    \hat{y}'(x) = - \frac{f_{yx}(x, \hat{y}(x))}{f_{yy}(x, \hat{y}(x))}
+\]
+Then compute second derivative, i.e.  $\hat{f}''(x)$ 
+
+
+
 \end{document}
  
-
-
-
-+ make things simple, get rid of f
-+ get rid of LLN
-+ 1/n remember
-+ beta depends on k
 
