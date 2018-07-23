@@ -194,3 +194,5 @@
     + read doc for glasserman&li's optimizer
     + read the Goude paper on optimizing max min problem
     + derive 1st/2nd order derivative and use an optimization software with it
++ ![](07.22.jpg)
+

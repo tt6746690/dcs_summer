@@ -23,8 +23,15 @@ for r=1:NRuns
     
     disp('BEGIN FINDING SHIFTED MEAN')
     t = cputime;
+    mu = GlassermanMu(zeros(S,1), H, BETA, tail, EAD, LGC);
+    disp('>>>>> fminsearch (un-constrained): '); mu
     [mu,~] = GlassermanMuCon(zeros(S,1),0, H, BETA, tail, EAD, LGC);
-    mu
+    disp('>>>>> fmincon (constrained): '); mu
+    [mu,~] = GlassermanMuConHess(zeros(S,1),0, H, BETA, tail, EAD, LGC);
+    disp('>>>>> fmincon with hessian (constrained): '); mu
+    mu = GlassermanMuGradAscent(mu, H, BETA, tail, EAD, LGC, 0, 0.5, 1000, 200, 0.02)
+    disp('>>>>> gradient ascent (constrained): '); mu
+
     % verify gradient of mu by computing the gradient
     % yield array of length 5 containing -0.2 as gradient for Z
     % pnc = ComputePNC(H,BETA,mu);
@@ -201,80 +208,3 @@ disp('sqrt(variance)')
 vpa(v)
 vpa(sigmaci)
 
-
-% 
-% 
-% 
-% >> (CHZ - CBZ)(1000:1005,:,1)
-% 
-% ans =
-% 
-%    -2.3167       Inf       Inf       Inf
-%    -2.5416       Inf       Inf       Inf
-%    -1.6007       Inf       Inf       Inf
-%    -1.8877       Inf       Inf       Inf
-%    -1.8010       Inf       Inf       Inf
-%    -1.4223       Inf       Inf       Inf
-% 
-% >> PINV(1000:1005,:,1)
-% 
-% ans =
-% 
-%     -3.4331       Inf       Inf       Inf
-%     -3.9233       Inf       Inf       Inf
-%     -1.7079       Inf       Inf       Inf
-%     -2.1042       Inf       Inf       Inf
-%     -1.9721       Inf       Inf       Inf
-%     -1.7461       Inf       Inf       Inf
-%    
-% 
-% tail =
-% 
-%     0
-% 
-% 
-% mu =
-% z
-% -0.0336
-% -0.0250
-% 0.0228
-% -0.0123
-% -0.0202
-% 
-% 
-% tail =
-% 
-% 0.9000
-% 
-% 
-% mu =
-% 
-% -0.0150
-% 0.0291
-% 0.0265
-% 0.0007
-% 0.0281
-% 
-% tail =
-% 
-% 0.9900
-% mu =
-% -0.0201
-% -0.0053
-% -0.0315
-% -0.0037
-% -0.0248
-
-
-% tail = 100
-% 
-% -0.7224
-% -0.4209
-% -0.1113
-% -0.8128
-% -0.7977
-
-% FINISH FINDING SHIFTED MEAN...979.23s
-% BEGIN SAMPLING
-% FINISH SAMPLING...0.01s
-% BEGIN COMPUTING
