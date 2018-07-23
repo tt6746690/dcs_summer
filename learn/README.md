@@ -1,7 +1,7 @@
 
 
 
-#### Papers
+#### Monte Carlo for Credit Risk
 
 
 + [2005_importance_sampling_for_portfolio_credit_risk](2005_importance_sampling_for_portfolio_credit_risk.pdf)
@@ -14,7 +14,7 @@
     + think about using its metric, specifically, a plot of plain MC and IS where x-axis is the tail thresholds and the y-axis is the corresponding simulated probability. If we do this for many replications, we can see the effect of variance reduction with IS methods by plotting curves for the simulated probabilities and 95% CI. We can utilize this metric in evaluating the different models implemented in Adam Sturge's paper
 
 + [2015_new_approaches_to_importance_sampling_for_portfolio_credit_risk_valuation](2015_new_approaches_to_importance_sampling_for_portfolio_credit_risk_valuation.pdf)
-    + Chen Zhe ?
+    + a better introduction to motivation & introduction
 
 + [2018_an_importance_sampling_scheme_for_multi_credit_state_portfolios](2018_an_importance_sampling_scheme_for_multi_credit_state_portfolios.pdf)
     + Adam Sturge Msc thesis
@@ -41,3 +41,8 @@
                 + exponential tiling: `q` is in exponential     family
             + consider IS as weighted MC
             + reference distribution
+
+#### Optimization 
+
++ [2016_on_differentiating_parameterized_argmin_and_argmax_problems_with_applications_to_bi_level_optimization](2016_on_differentiating_parameterized_argmin_and_argmax_problems_with_applications_to_bi_level_optimization.pdf)
+    + bi-level optimization
