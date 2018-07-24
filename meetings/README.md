@@ -196,3 +196,41 @@
     + derive 1st/2nd order derivative and use an optimization software with it
 + ![](07.22.jpg)
 
+
+
+##### 07.23 
+
++ inner level optimization 
+    + optimized value returned is not only `theta` but `theta+error`
+    + outer level is `f(z, theta + error)` instead, might not be smooth any more because of the inner level optimization 
+    + ideally inner level optimization have analytical gradient
++ mu finding algo: what to do next
+    + unconstrained optimization 
+    + `max_z f(z, theta)`
+        + use newton's method `fminunc` and supply gradient/hessian to outer level 
+            + `hat(z) = f(z, hat(theta))`
+        + use 1-D newton's method `fminunc` for inner level optimization 
+            + `hat(theta) = argmin g(z,theta)`
+
+
+```
+>>>>> fmincon (interior-point):
+
+mu =
+
+    0.6243
+   -0.4541
+   -2.2364
+    1.7449
+    1.9662
+
+>>>>> fmincon (sqp):
+
+mu =
+
+    0.3874
+   -0.0875
+   -2.3366
+    1.4583
+    2.2036
+```

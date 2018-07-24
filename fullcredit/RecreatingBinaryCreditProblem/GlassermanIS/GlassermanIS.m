@@ -23,14 +23,16 @@ for r=1:NRuns
     
     disp('BEGIN FINDING SHIFTED MEAN')
     t = cputime;
-    mu = GlassermanMu(zeros(S,1), H, BETA, tail, EAD, LGC);
-    disp('>>>>> fminsearch (un-constrained): '); mu
+    % mu = GlassermanMu(zeros(S,1), H, BETA, tail, EAD, LGC);
+    % disp('>>>>> fminsearch (un-constrained): '); mu
     [mu,~] = GlassermanMuCon(zeros(S,1),0, H, BETA, tail, EAD, LGC);
-    disp('>>>>> fmincon (constrained): '); mu
-    [mu,~] = GlassermanMuConHess(zeros(S,1),0, H, BETA, tail, EAD, LGC);
-    disp('>>>>> fmincon with hessian (constrained): '); mu
-    mu = GlassermanMuGradAscent(mu, H, BETA, tail, EAD, LGC, 0, 0.5, 1000, 200, 0.02)
-    disp('>>>>> gradient ascent (constrained): '); mu
+    disp('>>>>> fmincon (interior-point): '); mu
+    [mu,~] = GlassermanMuConSQP(zeros(S,1),0, H, BETA, tail, EAD, LGC);
+    disp('>>>>> fmincon (sqp): '); mu
+    % [mu,~] = GlassermanMuConHess(zeros(S,1),0, H, BETA, tail, EAD, LGC);
+    % disp('>>>>> fmincon with hessian (constrained): '); mu
+    % mu = GlassermanMuGradAscent(mu, H, BETA, tail, EAD, LGC, 0, 0.5, 1000, 200, 0.02)
+    % disp('>>>>> gradient ascent (constrained): '); mu
 
     % verify gradient of mu by computing the gradient
     % yield array of length 5 containing -0.2 as gradient for Z
