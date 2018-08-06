@@ -234,3 +234,27 @@ mu =
     1.4583
     2.2036
 ```
+
+
+
+##### 07.30
+
++ zeneng
+    + tried `fminunc` for S=5, l=0, MC estimate not biased,     
+    + compared `fminunc` and `fmincon`, two yield similar result
++ sample points around local min and see if shifted mu is local min/max
+    + hessian/ finite difference ...
+    + change tolerance level...
+    + set initial guess to be previous run of algo that starts with 0
++ dot plots for different algorithm and see if they alleviate the bias
++ adam 
+    + took gaussian mixture (mixture=2)'s shifted 
+
+
+
+##### 07.04
+
++ try different tail `l` larger than 0.2
++ compare with gaussian
++ sample points around local min and see if shifted mu is local min/max
++ try higher dimension for S

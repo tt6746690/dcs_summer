@@ -1,7 +1,10 @@
-function [ mu, obj,exit] = GlassermanMuCon(z0,theta0, H, BETA, tail, EAD, LGC, noHess,Foption)
+% fmicon
+% Find minimum of constrained nonlinear multivariable function
+function [ mu, thetaOpt ] = GlassermanMuUnc(z0, theta0, H, BETA, tail, EAD, LGC )
 
     weights = EAD.*LGC;
-    exit=[];
+    % weights = LGC;
+
     v0 = [z0;theta0];
     function [p] = psi(theta,pnc,weights)
         p = sum(log(sum(pnc.*exp(weights.*theta),2)),1);
@@ -53,12 +56,11 @@ function [ mu, obj,exit] = GlassermanMuCon(z0,theta0, H, BETA, tail, EAD, LGC, n
         gPsi = sum(sum(gp.*exp(weights.*theta),2) ./ sum(pnc.*exp(weights.*theta),2),1);
         gPsi = reshape(gPsi,size(z));
         
-        if nargout > 1
+        dpsidtheta = sum(sum(pnc.*weights.*exp(weights.*theta),2) ./ sum(pnc.*exp(weights.*theta),2),1);
         
         grad = [-gPsi + z; ...
-            tail - sum(sum(pnc.*weights.*exp(weights.*theta),2) ./ sum(pnc.*exp(weights.*theta),2),1)
+            tail - dpsidtheta
             ];
-        end
     end
 
     function [c,ceq,gradc,gradceq] = fl(v, H, BETA, tail, weights)
@@ -67,9 +69,9 @@ function [ mu, obj,exit] = GlassermanMuCon(z0,theta0, H, BETA, tail, EAD, LGC, n
         theta = v(end);
         z = v(1:end-1);
         pnc = ComputePNC(H,BETA,z);
-        ceq = -tail + sum(sum(pnc.*weights.*exp(weights.*theta),2) ./ sum(pnc.*exp(weights.*theta),2),1);
-        
-        if nargout > 2
+        dpsidtheta = sum(sum(pnc.*weights.*exp(weights.*theta),2) ./ sum(pnc.*exp(weights.*theta),2),1);
+        ceq = -tail + dpsidtheta;
+       
         gp = ComputeGradP(H,BETA,z);
         
         gradc = zeros(size(v));
@@ -92,7 +94,6 @@ function [ mu, obj,exit] = GlassermanMuCon(z0,theta0, H, BETA, tail, EAD, LGC, n
 
         
         gradceq = [gdPsidTheta;ddPsiddTheta];
-        end
     end
 
     function [hessian] = hessianPZ(z, H, BETA)
@@ -169,109 +170,16 @@ function [ mu, obj,exit] = GlassermanMuCon(z0,theta0, H, BETA, tail, EAD, LGC, n
   
     end
 
-%%%%%%%%%%%uncontrianted objective funciton
-function [pTheta,thetaVec] = GlassermanPTheta(pncz,weights,tail)
-    [~,NMC] = size(pncz);
-    pTheta = pncz;
-    thetaVec = zeros(1,1);
-    psi = @(theta,pnc) sum(log(sum(pnc.*exp(weights.*theta),2)),1);
-    for k=1:1
-        pnc = pncz(:,:,k);
-
-        threshold = sum(sum(weights.*pnc,2),1);
-        if tail > threshold
-            energy = @(theta) psi(theta,pnc) - tail*theta;
-            option = optimset('LargeScale','off', 'display', 'off');
-            intialGuess = 0;
-            if(k > 1); intialGuess = thetaVec(k-1); end
-            [theta,~] = fminunc(energy, intialGuess, option);
-            twist = pnc.*exp(weights.*theta(end));
-            s = sum(twist,2);
-            pTheta(:,:,k) = bsxfun(@rdivide,twist,s);
-            thetaVec(k) = theta;
-        end
-    end
-end
-
-function [energy, grad] = fu1(z, H, BETA, tail, weights)
-        pnc = ComputePNC(H,BETA,z);
-        [~,theta] = GlassermanPTheta(pnc,weights,tail); 
-        energy = theta*tail - psi(theta,pnc,weights) + 0.5*(z'*z);
-        gp = ComputeGradP(H,BETA,z);
-        gPsi = sum(sum(gp.*exp(weights.*theta),2) ./ sum(pnc.*exp(weights.*theta),2),1);
-        gPsi = reshape(gPsi,size(z));
-        
-        if nargout > 1
-            [c,ceq,gradc,gradceq] = fl([z;theta], H, BETA, tail, weights);
-            delta = gradceq(1:(end-1))./gradceq(end);
-            gradceq(1:(end-1))
-            gradceq(end)
-            grad = -gPsi + z -(tail - sum(sum(pnc.*weights.*exp(weights.*theta),2) ./ sum(pnc.*exp(weights.*theta),2),1))*delta;
-         
-     
-
-        end
-    end
-
-    tolerancelvl = 1e-15
-
     Energy = @(v) fu(v, H, BETA, tail, weights);
-    Energy1 = @(z) fu1(z, H, BETA, tail, weights);
     Condition = @(v) fl(v, H, BETA, tail, weights);
     HessianFcn = @(v,lambda) hessianE(v, lambda, H, BETA, tail, weights);
-    method1={'interior-point'};
-    method2={'quasi-newton','trust-region'};
-    if Foption == true
-        
-      for i=1:length(method1)
-         if noHess == true
+    options = optimoptions ('fmincon','Algorithm','interior-point','MaxFunctionEvaluations',13000,...
+        'SpecifyObjectiveGradient',true,'SpecifyConstraintGradient',true,'CheckGradients',false,...
+        'maxIter',3000, 'Display', 'off'); %,'HessianFcn',HessianFcn
+    [v,fval,exitflag,output,lambda,grad,hessian] = fmincon(Energy,v0,[],[],[],[],[],[],Condition,options)
     
-            options = optimoptions ('fmincon','Algorithm',char(method1(i)),'MaxFunctionEvaluations',13000,...
-            'SpecifyObjectiveGradient',true,'SpecifyConstraintGradient',true,'CheckGradients',false,...
-            'maxIter',3000, 'OptimalityTolerance',tolerancelvl, 'StepTolerance', tolerancelvl, 'FunctionTolerance', tolerancelvl);
-            [v,fval,exitflag,output,lambda,grad,hessian] = fmincon(Energy,v0,[],[],[],[],[],[],Condition,options);
-             mu(:,i) = v(1:end-1);
-             obj(i)=fval;
-             exit(i)=exitflag;
-            
-         
-         else
-             options = optimoptions ('fmincon','Algorithm',char(method(i)),'MaxFunctionEvaluations',13000,...
-             'SpecifyObjectiveGradient',true,'SpecifyConstraintGradient',true,'CheckGradients',false,...
-             'maxIter',3000,'HessianFcn',HessianFcn,'OptimalityTolerance',tolerancelvl, 'StepTolerance', tolerancelvl, 'FunctionTolerance', tolerancelvl);
-             [v,fval,exitflag,output,lambda,grad,hessian] = fmincon(Energy,v0,[],[],[],[],[],[],Condition,options);
-             mu(:,i) = v(1:end-1);
-             obj(i)=fval;
-             exit(i)=exitflag;
-         end    
-             
-      end 
-    
-    else
-        for i=1:length(method2)
-         if noHess == true
-            
-            options = optimoptions ('fminunc','Algorithm',char(method2(i)),'MaxFunctionEvaluations',13000,...
-            'SpecifyObjectiveGradient',true,'CheckGradients',false,...
-            'maxIter',6000,'OptimalityTolerance',tolerancelvl, 'StepTolerance', tolerancelvl, 'FunctionTolerance', tolerancelvl);
-            [z1,fval,exitflag,~] = fminunc(Energy1,z0,options);
-             mu(:,i) = z1;
-             obj(i)=fval;
-             exit(i)=exitflag;
-
-         else
-             options = optimoptions ('fminunc','Algorithm',char(method2(i)),'MaxFunctionEvaluations',13000,...
-             'SpecifyObjectiveGradient',true,'CheckGradients',false,...
-             'maxIter',3000,'HessianFcn',HessianFcn,'OptimalityTolerance',tolerancelvl, 'StepTolerance', tolerancelvl, 'FunctionTolerance', tolerancelvl);
-             [z1,fval,exitflag,output,lambda,grad,hessian] = fminunc(Energy1,z0,options);
-             mu(:,i) = z1;
-             obj(i)=fval;
-             exit(i)=exitflag;
-         end
-        
-        
-       end
-    end
-    
+    thetaOpt = v(end);
+    mu = v(1:end-1);
 
 end
+

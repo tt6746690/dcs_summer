@@ -213,7 +213,6 @@ function [energy, grad] = fu1(z, H, BETA, tail, weights)
         end
     end
 
-    tolerancelvl = 1e-15
 
     Energy = @(v) fu(v, H, BETA, tail, weights);
     Energy1 = @(z) fu1(z, H, BETA, tail, weights);
@@ -228,7 +227,7 @@ function [energy, grad] = fu1(z, H, BETA, tail, weights)
     
             options = optimoptions ('fmincon','Algorithm',char(method1(i)),'MaxFunctionEvaluations',13000,...
             'SpecifyObjectiveGradient',true,'SpecifyConstraintGradient',true,'CheckGradients',false,...
-            'maxIter',3000, 'OptimalityTolerance',tolerancelvl, 'StepTolerance', tolerancelvl, 'FunctionTolerance', tolerancelvl);
+            'maxIter',3000); 
             [v,fval,exitflag,output,lambda,grad,hessian] = fmincon(Energy,v0,[],[],[],[],[],[],Condition,options);
              mu(:,i) = v(1:end-1);
              obj(i)=fval;
@@ -238,31 +237,35 @@ function [energy, grad] = fu1(z, H, BETA, tail, weights)
          else
              options = optimoptions ('fmincon','Algorithm',char(method(i)),'MaxFunctionEvaluations',13000,...
              'SpecifyObjectiveGradient',true,'SpecifyConstraintGradient',true,'CheckGradients',false,...
-             'maxIter',3000,'HessianFcn',HessianFcn,'OptimalityTolerance',tolerancelvl, 'StepTolerance', tolerancelvl, 'FunctionTolerance', tolerancelvl);
+             'maxIter',3000,'HessianFcn',HessianFcn);
              [v,fval,exitflag,output,lambda,grad,hessian] = fmincon(Energy,v0,[],[],[],[],[],[],Condition,options);
              mu(:,i) = v(1:end-1);
              obj(i)=fval;
              exit(i)=exitflag;
-         end    
+         end
+         
+         
+             
              
       end 
     
     else
         for i=1:length(method2)
          if noHess == true
-            
+    
             options = optimoptions ('fminunc','Algorithm',char(method2(i)),'MaxFunctionEvaluations',13000,...
             'SpecifyObjectiveGradient',true,'CheckGradients',false,...
-            'maxIter',6000,'OptimalityTolerance',tolerancelvl, 'StepTolerance', tolerancelvl, 'FunctionTolerance', tolerancelvl);
+            'maxIter',6000,'OptimalityTolerance',1.0e-010);
             [z1,fval,exitflag,~] = fminunc(Energy1,z0,options);
              mu(:,i) = z1;
              obj(i)=fval;
              exit(i)=exitflag;
-
+            
+         
          else
              options = optimoptions ('fminunc','Algorithm',char(method2(i)),'MaxFunctionEvaluations',13000,...
              'SpecifyObjectiveGradient',true,'CheckGradients',false,...
-             'maxIter',3000,'HessianFcn',HessianFcn,'OptimalityTolerance',tolerancelvl, 'StepTolerance', tolerancelvl, 'FunctionTolerance', tolerancelvl);
+             'maxIter',3000,'HessianFcn',HessianFcn);
              [z1,fval,exitflag,output,lambda,grad,hessian] = fminunc(Energy1,z0,options);
              mu(:,i) = z1;
              obj(i)=fval;

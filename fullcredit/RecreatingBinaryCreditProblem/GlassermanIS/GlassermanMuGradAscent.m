@@ -13,7 +13,7 @@ function [ mu ] = GlassermanMuGradAscent( mu, H, BETA, tail, EAD, LGC, tol, step
         updateSize = norm(gradZ);
         update = step*gradZ./updateSize;
         mu = mu + update;
-        updateSize
+        % updateSize
         if(mod(iter,iterDecay) == 0)
             step = decay*step;
         end

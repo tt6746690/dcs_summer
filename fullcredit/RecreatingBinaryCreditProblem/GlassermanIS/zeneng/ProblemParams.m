@@ -1,9 +1,9 @@
 function [H, BETA, tail, EAD, CN, LGC, CMM, C] = ProblemParams(N, S, loadFixed)
-tail = 0.01; % cursive l in paper
+tail = 0; % cursive l in paper
 C = 4; % number of credit states
 
 if(loadFixed)
-           filename = strcat(pwd,'/Experiments/S=',num2str(S),'/params.mat');
+           filename = strcat(pwd,'\Experiments\S=',num2str(S),'\params.mat');
            load(filename); 
 else
     % We will be putting all creditors in credit state C with prob p of
@@ -34,4 +34,3 @@ else
 end
 
 end
-
