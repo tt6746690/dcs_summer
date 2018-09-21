@@ -26,7 +26,6 @@ end
 mu
 disp(strcat('FINISH FINDING SHIFTED MEAN...',num2str(cputime - t),'s'))
 
-
 % create file for outputs ...
 FID = fopen(sprintf('compare_methods_S%d_l%0.2f.txt', S,tail), 'w');  
 fprintf(FID, 'MU: %s\n', sprintf('%d ', mu))
