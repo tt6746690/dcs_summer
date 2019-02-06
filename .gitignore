@@ -6,6 +6,8 @@ numerical_methods_in_finance_and_economics_matlab_intro.pdf
 *.log
 *.out
 *.synctex.gz
+*.fdb_latexmk
+*.fls
 *.snm
 *.toc
 *.nav

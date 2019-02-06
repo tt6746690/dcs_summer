@@ -1,22 +1,24 @@
 \documentclass[11pt]{article}
-\input{\string~/.preamble}
+\input{\string~/.macros}
+\usepackage[a4paper, total={6in, 8in}, margin=0.5in]{geometry}
+\usepackage{bbm}
 
 \begin{document}
 
 
 \renewcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \renewcommand{\E}[2][]{\mathbb{E}_{#1}\left\{#2\right\}}
-\newcommand{\var}[2][]{var_{#1}\left\{#2\right\}}
-\newcommand{\cov}[1]{cov\{#1\}} 
+\renewcommand{\var}[2][]{var_{#1}\left\{#2\right\}}
+\renewcommand{\cov}[1]{cov\{#1\}} 
 \newcommand{\normal}[1]{\mathcal{N}\left(#1\right)}
 \newcommand{\exponents}[1]{exp\left\{#1\right\}}
 \newcommand{\indicator}[1]{\mathbbm{1}_{#1}}
 
-\newcommand{\bmu}{\boldsymbol{\mu}}
-\newcommand{\bpi}{\boldsymbol{\pi}}
+\renewcommand{\bmu}{\boldsymbol{\mu}}
+\renewcommand{\bpi}{\boldsymbol{\pi}}
 \newcommand{\bTheta}{\boldsymbol{\Theta}}
 \newcommand{\bSigma}{\boldsymbol{\Sigma}}
-\newcommand{\bphi}{\boldsymbol{\phi}}
+\renewcommand{\bphi}{\boldsymbol{\phi}}
 
 \newcommand{\calA}{\mathcal{A}}
 \newcommand{\calL}{\mathcal{L}}
@@ -25,13 +27,6 @@
 \newcommand{\calC}{\mathcal{C}}
 \newcommand{\calD}{\mathcal{D}}
 \newcommand{\calZ}{\mathcal{Z}}
-\newcommand{\bx}{\matr{x}}
-\newcommand{\bt}{\matr{t}}
-\newcommand{\bw}{\matr{w}}
-\newcommand{\bX}{\matr{X}}
-\newcommand{\bZ}{\matr{Z}}
-\newcommand{\bz}{\matr{z}}
-\newcommand{\bu}{\matr{u}}
 
 
 
@@ -96,20 +91,47 @@
         \mu = \max_z P(L>x | Z=z) e^{\frac{-z^T z}{2}}
     \]
     Then the likelihood for the outer IS is then 
-    \[
+    \begin{align*}
         \frac{\normal{0, I}}{\normal{\mu, I}}
-        = \frac{exp(-\frac{1}{2} z^T z)}{exp(-\frac{1}{2} (z-\mu)^T (z-\mu))}
-        = exp
+        &= \frac{exp(-\frac{1}{2} z^T z)}{exp(-\frac{1}{2} (z-\mu)^T (z-\mu))} \\ 
+        &= exp
         \left(
             -\frac{1}{2} z^T z - \frac{1}{2} z^T z + z^T \mu - \frac{1}{2} \mu^T \mu
-        \right)
-        = e^{ -\mu^T Z + \mu^T \mu /2 }
-    \]
+        \right) \\
+        &= e^{ -\mu^T Z + \mu^T \mu /2 } 
+    \end{align*}
     Therefore, the estimator for probability of tail event is given by 
     \[
         \mathbbm{1}_{L>x} e^{\theta_x(Z)L + \psi(\theta_x(Z), Z)} e^{ -\mu^T Z + \mu^T \mu /2 }
     \]
 \end{enumerate}
+
+\newpage
+
+\subsection*{Likelihood ratio expression}
+
+Show
+\[
+    \prod_{k=1}^m \p{\frac{p_k}{p_{k, \theta}}}^{Y_k} \p{\frac{1 - p_k}{1 - p_{k, \theta}}}^{1 - Y_k}
+    = e^{-\theta L + \phi(\theta)}
+    \quad \quad \text{where} \quad \quad
+    \phi(\theta) = \sum_{k=1}^m \log \p{1 + p_k (e^{\theta c_k} - 1)}
+\]
+\begin{proof}
+    \begin{align*}
+        \textit{lhs}
+        &= \text{exp} \pc{
+            \sum_{k=1}^m Y_k \log \p{\frac{p_k}{p_{k,\theta}}} + (1 - Y_k) \log \p{\frac{1-p_k}{1-p_{k,\theta}}}
+        } \\ 
+        &= \text{exp} \pc{
+            \sum_{k=1}^m Y_k \log \p{1 + p_k (e^{\theta c_k} - 1)} - Y_k \theta c_k + (1 - Y_k) \log \p{1 + p_k\p{e^{\theta c_k} - 1}}
+        } = \textit{rhs} \\
+    \end{align*}
+    where 
+    \[
+        1 - p_{k,\theta} = \frac{1-p_k}{1 + p_k\p{e^{\theta c_k}-1}}    
+    \]
+\end{proof}
 
 
 \newpage 
